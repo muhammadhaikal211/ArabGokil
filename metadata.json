@@ -1,0 +1,8 @@
+{
+  "name": "Pembelajaran Bahasa Arab Kelas X",
+  "description": "Aplikasi pembelajaran interaktif Bahasa Arab untuk siswa Kelas X SMA/MA dengan kurikulum lengkap, kuis, audio mufrodat, dan asisten AI Ustadz.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

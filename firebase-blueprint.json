@@ -1,0 +1,99 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account profile document",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["student", "admin"], "maxLength": 32 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "lastLoginAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "email", "displayName", "role"]
+    },
+    "QuizResult": {
+      "title": "QuizResult",
+      "description": "Student quiz submission record with score and metrics",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 128 },
+        "chapterId": { "type": "string", "maxLength": 64 },
+        "chapterTitle": { "type": "string", "maxLength": 128 },
+        "score": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "correctCount": { "type": "number" },
+        "submittedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "userId", "userName", "chapterId", "score", "totalQuestions"]
+    },
+    "LearningProgress": {
+      "title": "LearningProgress",
+      "description": "Tracks student progress across chapters and modules",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "chapterId": { "type": "string", "maxLength": 64 },
+        "completed": { "type": "boolean" },
+        "lastSection": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "userId", "chapterId", "completed"]
+    },
+    "CustomMaterial": {
+      "title": "CustomMaterial",
+      "description": "Additional learning materials posted by teacher or admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 128 },
+        "chapterId": { "type": "string", "maxLength": 64 },
+        "arabicText": { "type": "string", "maxLength": 4000 },
+        "indonesianText": { "type": "string", "maxLength": 4000 },
+        "grammarNotes": { "type": "string", "maxLength": 2000 },
+        "authorName": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "title", "chapterId", "arabicText", "indonesianText"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Admin whitelist entry",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["admin"], "maxLength": 16 }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profile collection"
+    },
+    "/quiz_results/{resultId}": {
+      "schema": { "$ref": "#/entities/QuizResult" },
+      "description": "Quiz submissions and scores"
+    },
+    "/learning_progress/{progressId}": {
+      "schema": { "$ref": "#/entities/LearningProgress" },
+      "description": "Student lesson completion status"
+    },
+    "/custom_materials/{materialId}": {
+      "schema": { "$ref": "#/entities/CustomMaterial" },
+      "description": "Supplemental learning materials created by teachers/admins"
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/Admin" },
+      "description": "Admin authorization records"
+    }
+  }
+}
