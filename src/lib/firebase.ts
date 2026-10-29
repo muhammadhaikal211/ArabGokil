@@ -1,10 +1,23 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
-import firebaseConfig from '../../firebase-applet-config.json';
+import firebaseAppletConfig from '../../firebase-applet-config.json';
+
+// Exact Firebase Configuration requested by user
+export const firebaseConfig = {
+  apiKey: "AIzaSyC-htESaUNVxv0YI-6o-RZEKI5LxMCLzy8",
+  authDomain: "arabgokil-2bb40.firebaseapp.com",
+  projectId: "arabgokil-2bb40",
+  storageBucket: "arabgokil-2bb40.firebasestorage.app",
+  messagingSenderId: "67178610948",
+  appId: "1:67178610948:web:72d47d2c656053b2bbd051",
+  firestoreDatabaseId: firebaseAppletConfig.firestoreDatabaseId || "(default)",
+};
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== '(default)'
+  ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
+  : getFirestore(app);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 

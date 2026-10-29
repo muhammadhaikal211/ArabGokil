@@ -10,6 +10,10 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
     function isAdmin() {
       return isSignedIn() && (
         request.auth.token.email == 'haikalhaikal1225@gmail.com' ||
@@ -31,30 +35,35 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
-    // Users collection
+    // Users collection: Setiap user HANYA bisa baca & tulis datanya sendiri
     match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow delete: if isAdmin();
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isOwner(userId) || isAdmin();
+
+      // Sub-koleksi milik user: hanya user bersangkutan yang bisa baca/tulis
+      match /{allSubcollections=**} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
     }
 
-    // Quiz Results
+    // Quiz Results: Setiap user HANYA bisa baca & tulis datanya sendiri
     match /quiz_results/{resultId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && isValidId(resultId) && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isAdmin();
-    }
-
-    // Learning Progress
-    match /learning_progress/{progressId} {
       allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if isSignedIn() && isValidId(progressId) && request.resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(resultId) && request.resource.data.userId == request.auth.uid;
       allow update: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
       allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
-    // Custom Materials (Materi Pembelajaran Tambahan)
+    // Learning Progress: Setiap user HANYA bisa baca & tulis datanya sendiri
+    match /learning_progress/{progressId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isValidId(progressId) && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Custom Materials: Materi pembelajaran tambahan
     match /custom_materials/{materialId} {
       allow read: if isSignedIn();
       allow create, update, delete: if isAdmin();
